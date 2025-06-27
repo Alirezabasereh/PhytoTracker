@@ -19,106 +19,130 @@
             font-family: myfont;
         }
 
+       /* فونت فارسی */
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600&display=swap');
+
         body {
-            font-family: sans-serif;
-            background: #ffffff;
-            padding: 20px;
-        }
-
-        input,
-        button {
-            padding: 10px;
-            margin: 10px 0;
-        }
-
-        button {
-            background: #ff8000;
-            color: white;
-            border: none;
-            width: 60px;
-            border-radius: 5px;
-        }
-
-        h1 {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            padding: 2rem;
             text-align: center;
         }
 
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 1.5rem;
+        }
+
         .inp-btn {
-            margin: 20px auto;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border: 2px solid rgb(0, 187, 255);
-            border-radius: 10px;
-        }
-
-        .count, .buttons{
-            width: 100%;
-            height: 50px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.352);
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
-        .count div ,.buttons div {
-            width: 50%;
-            height: 100%;
+        #countInput {
+            padding: 0.7rem 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.75rem;
+            width: 150px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #countInput:focus {
+            border-color: #ff7f0e;
+            box-shadow: 0 0 5px rgba(255, 127, 14, 0.4);
+        }
+
+        #saveButton {
+            background-color: #ff7f0e;
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #saveButton:hover {
+            background-color: #e6700d;
+        }
+
+        .count {
             display: flex;
             justify-content: center;
-            align-items: center;
-
-            p {
-                padding: 5px;
-                border: 1px solid rgb(0, 187, 255);
-                border-radius: 5px;
-            }
-        }
-        
-        #remove, #removeall{
-            width: 140px;
-            height: 40px;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
         }
 
-        #remove{
-            background-color: #ff8000;
+        .count div {
+            background-color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-weight: 600;
+            color: #333;
         }
 
-        #removeall{
-            background-color: red;
-        }
-
-        ul {
-            width: 100%;
-            min-height: 100px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.352);
+        .buttons {
             display: flex;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-top: 10px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
 
-            :hover {
-                background-color: #ff8000;
-                color: white;
-            }
+        #removeall,
+        #remove {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
 
+        #removeall {
+            background-color: #e63946;
+        }
 
-            li {
-                width: 90%;
-                height: 50px;
-                border-radius: 10px;
-                box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.352);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 10px;
-                transition: 0.4s ease;
-            }
+        #removeall:hover {
+            background-color: #c5303a;
+        }
+
+        #remove {
+            background-color: #ff7f0e;
+        }
+
+        #remove:hover {
+            background-color: #e6700d;
+        }
+
+        ul#listView {
+            list-style: none;
+            padding: 0;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        ul#listView li {
+            background-color: white;
+            margin-bottom: 0.7rem;
+            padding: 0.8rem 1rem;
+            border-radius: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+            text-align: right;
+            direction: rtl;
+            color: #444;
         }
     </style>
 
