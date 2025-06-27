@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phyto Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        @font-face {
+            font-family: myfont;
+            src: url(Samim.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: myfont;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: #ffffff;
+            padding: 20px;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            background: #ff8000;
+            color: white;
+            border: none;
+            width: 60px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .inp-btn {
+            margin: 20px auto;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 2px solid rgb(0, 187, 255);
+            border-radius: 10px;
+        }
+
+        .count, .buttons{
+            width: 100%;
+            height: 50px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.352);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .count div ,.buttons div {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            p {
+                padding: 5px;
+                border: 1px solid rgb(0, 187, 255);
+                border-radius: 5px;
+            }
+        }
+        
+        #remove, #removeall{
+            width: 140px;
+            height: 40px;
+        }
+
+        #remove{
+            background-color: #ff8000;
+        }
+
+        #removeall{
+            background-color: red;
+        }
+
+        ul {
+            width: 100%;
+            min-height: 100px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.352);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-top: 10px;
+
+            :hover {
+                background-color: #ff8000;
+                color: white;
+            }
+
+
+            li {
+                width: 90%;
+                height: 50px;
+                border-radius: 10px;
+                box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.352);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 10px;
+                transition: 0.4s ease;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>گزارش مصرف قرص فیتو</h1>
+
+    <div class="inp-btn">
+
+        <input type="number" id="countInput" placeholder="تعداد مصرف‌شده">
+
+        <button id="saveButton">ثبت</button>
+
+    </div>
+
+
+    <div class="count">
+        <div>
+            <p id="remainingText">باقی‌مانده: 120 عدد</p>
+
+        </div>
+
+        <div>
+            <p id="totalText">مصرف شده: 0 عدد</p>
+
+        </div>
+
+    </div>
+
+
+    <div class="buttons">
+        <div>
+            <button id="removeall">حذف کل لیست</button>
+        </div>
+
+        <div>
+            <button id="remove">حذف آخرین مصرف</button>
+        </div>
+
+
+    </div>
+
+
+    <ul id="listView"></ul>
+
+</body>
+
+
+<script defer>
+    let total = 0;
+    const max = 120;
+    let list = JSON.parse(localStorage.getItem('phyto_list') || '[]');
+
+    function updateUI() {
+        document.getElementById('totalText').textContent = `مصرف شده: ${total} عدد`;
+        document.getElementById('remainingText').textContent = `باقی‌مانده: ${max - total} عدد`;
+        const listView = document.getElementById('listView');
+        listView.innerHTML = '';
+        list.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            listView.appendChild(li);
+        });
+    }
+
+    function saveData() {
+        localStorage.setItem('phyto_total', total);
+        localStorage.setItem('phyto_list', JSON.stringify(list));
+    }
+
+    document.getElementById('saveButton').addEventListener('click', () => {
+        const input = document.getElementById('countInput').value;
+        const count = parseInt(input);
+        if (!isNaN(count) && count > 0) {
+            const now = new Date().toLocaleString();
+            const entry = `${now}: ${count} عدد`;
+            list.push(entry); // اضافه به انتهای لیست
+            total += count;
+            saveData();
+            updateUI();
+        }
+    });
+
+    // حذف آخرین آیتم (دکمه‌ی با آیدی "remove")
+    document.getElementById('remove').addEventListener('click', () => {
+        if (list.length > 0) {
+            const lastEntry = list.pop();
+            const match = lastEntry.match(/(\d+)\s*عدد$/);
+            if (match) {
+                const count = parseInt(match[1]);
+                total -= count;
+                if (total < 0) total = 0;
+            }
+            saveData();
+            updateUI();
+        }
+    });
+
+    // حذف کل آیتم‌ها و بازگرداندن کل مقدار (دکمه‌ی با آیدی "removeall")
+    document.getElementById('removeall').addEventListener('click', () => {
+        let restored = 0;
+        list.forEach(item => {
+            const match = item.match(/(\d+)\s*عدد$/);
+            if (match) {
+                restored += parseInt(match[1]);
+            }
+        });
+        total -= restored;
+        if (total < 0) total = 0;
+        list = [];
+        saveData();
+        updateUI();
+    });
+
+    window.addEventListener('load', () => {
+        total = parseInt(localStorage.getItem('phyto_total') || '0');
+        updateUI();
+
+        // نصب سرویس ورکر
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    });
+</script>
+
+
+
+
+
+</html>
