@@ -12,6 +12,32 @@
             src: url(Samim.ttf);
         }
 
+
+        @keyframes create {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+
+            to {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes remove {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -109,7 +135,7 @@
             width: 100%;
 
 
-            div{
+            div {
                 width: 50%;
             }
         }
@@ -164,6 +190,7 @@
             display: flex;
             justify-content: left;
             align-items: center;
+            transition: 0.5s;
 
             .pill-icon {
                 width: 20px;
@@ -172,7 +199,7 @@
             }
         }
 
-        .pill-image{
+        .pill-image {
             display: flex;
             justify-content: right;
             align-items: center;
@@ -182,16 +209,28 @@
 
 
 
-        .data{
+        .data {
             width: 85%;
             height: 100%;
         }
 
 
 
-        .main{
+        .main {
             margin: 0px auto;
             max-width: 400px;
+        }
+
+
+
+
+        .create {
+            animation: create 0.5s ease forwards;
+        }
+
+
+        .remove {
+            animation: remove 0.4s ease forwards;
         }
     </style>
 
@@ -205,44 +244,44 @@
         <div class="inp-btn">
 
             <input type="number" id="countInput" placeholder="تعداد مصرف‌شده">
-    
+
             <button id="saveButton">ثبت</button>
-    
+
         </div>
-    
-    
+
+
         <div class="count">
             <div>
                 <p id="remainingText">باقی‌مانده: 120 عدد</p>
-    
+
             </div>
-    
+
             <div>
                 <p id="totalText">مصرف شده: 0 عدد</p>
-    
+
             </div>
-    
+
         </div>
-    
-    
+
+
         <div class="buttons">
             <div>
                 <button id="removeall">حذف کل لیست</button>
             </div>
-    
+
             <div>
                 <button id="remove">حذف آخرین مصرف</button>
             </div>
-    
-    
+
+
         </div>
-    
-    
+
+
         <ul id="listView"></ul>
 
     </div>
 
-   
+
 
 </body>
 
@@ -255,24 +294,20 @@
     function updateUI() {
         document.getElementById('totalText').textContent = `مصرف شده: ${total} عدد`;
         document.getElementById('remainingText').textContent = `باقی‌مانده: ${max - total} عدد`;
+
         const listView = document.getElementById('listView');
         listView.innerHTML = '';
+
         list.forEach(item => {
             const li = document.createElement('li');
-
             li.innerHTML = `
-                        
-              <div class="pill-image">
-                            <img src="pill-icon.png" class="pill-icon">
+                <div class="pill-image">
+                    <img src="pill-icon.png" class="pill-icon">
                 </div>
-
-              <div class="data">
-                             <span>${item}</span>
+                <div class="data">
+                    <span>${item}</span>
                 </div>
-
             `;
-            
-
             listView.appendChild(li);
         });
     }
@@ -288,29 +323,52 @@
         if (!isNaN(count) && count > 0) {
             const now = new Date().toLocaleString();
             const entry = `${now}: ${count} عدد`;
-            list.push(entry); // اضافه به انتهای لیست
+            list.push(entry);
             total += count;
             saveData();
-            updateUI();
+
+            const listView = document.getElementById('listView');
+            const li = document.createElement('li');
+            li.classList.add('create');
+            li.innerHTML = `
+                <div class="pill-image">
+                    <img src="pill-icon.png" class="pill-icon">
+                </div>
+                <div class="data">
+                    <span>${entry}</span>
+                </div>
+            `;
+            listView.appendChild(li);
+
+            document.getElementById('totalText').textContent = `مصرف شده: ${total} عدد`;
+            document.getElementById('remainingText').textContent = `باقی‌مانده: ${max - total} عدد`;
+
+            document.getElementById('countInput').value = '';
         }
     });
 
-    // حذف آخرین آیتم (دکمه‌ی با آیدی "remove")
     document.getElementById('remove').addEventListener('click', () => {
-        if (list.length > 0) {
-            const lastEntry = list.pop();
-            const match = lastEntry.match(/(\d+)\s*عدد$/);
-            if (match) {
-                const count = parseInt(match[1]);
-                total -= count;
-                if (total < 0) total = 0;
-            }
-            saveData();
-            updateUI();
+        const listView = document.getElementById('listView');
+        const lastLi = listView.lastElementChild;
+
+        if (lastLi && list.length > 0) {
+            lastLi.classList.add('remove');
+
+            setTimeout(() => {
+                const lastEntry = list.pop();
+                const match = lastEntry.match(/(\d+)\s*عدد$/);
+                if (match) {
+                    const count = parseInt(match[1]);
+                    total -= count;
+                    if (total < 0) total = 0;
+                }
+
+                saveData();
+                updateUI();
+            }, 400);
         }
     });
 
-    // حذف کل آیتم‌ها و بازگرداندن کل مقدار (دکمه‌ی با آیدی "removeall")
     document.getElementById('removeall').addEventListener('click', () => {
         let restored = 0;
         list.forEach(item => {
@@ -330,15 +388,11 @@
         total = parseInt(localStorage.getItem('phyto_total') || '0');
         updateUI();
 
-        // نصب سرویس ورکر
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js');
         }
     });
 </script>
 
-
-
-
-
+    
 </html>
