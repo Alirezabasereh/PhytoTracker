@@ -23,7 +23,7 @@
         body {
             background-color: #f8f9fa;
             color: #212529;
-            padding: 2rem;
+            padding: 32px 16px;
             text-align: center;
         }
 
@@ -39,13 +39,14 @@
             justify-content: space-evenly;
             gap: 0.5rem;
             margin-bottom: 1rem;
+            width: 100%;
         }
 
         #countInput {
             padding: 0.7rem 1rem;
             border: 1px solid #ced4da;
             border-radius: 0.75rem;
-            width: 200px;
+            width: 70%;
             font-size: 1rem;
             outline: none;
             transition: all 0.3s ease;
@@ -62,6 +63,7 @@
         }
 
         #saveButton {
+            width: 30%;
             background-color: #3ec74a;
             color: white;
             border: none;
@@ -87,7 +89,7 @@
 
         .count div {
             background-color: white;
-            width: 200px;
+            width: 50%;
             height: 50px;
             display: flex;
             justify-content: center;
@@ -104,11 +106,17 @@
             gap: 1rem;
             margin-bottom: 1.5rem;
             flex-wrap: nowrap;
+            width: 100%;
+
+
+            div{
+                width: 50%;
+            }
         }
 
         #removeall,
         #remove {
-            width: 140px;
+            width: 100%;
             height: 50px;
             display: flex;
             justify-content: center;
@@ -147,24 +155,43 @@
         ul#listView li {
             background-color: white;
             margin-bottom: 0.7rem;
-            padding: 0.8rem 1rem;
+            padding: 12px 0px;
             border-radius: 0.8rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             font-size: 0.95rem;
             color: #444;
             border: 1px solid #0e9fff;
             display: flex;
-            justify-content: center;
+            justify-content: left;
             align-items: center;
 
             .pill-icon {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 50px;
-                height: 50px;
-                margin-left: -20px;
+                width: 20px;
+                /* height: 50px; */
+                object-fit: cover;
             }
+        }
+
+        .pill-image{
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            width: 15%;
+            height: 100%;
+        }
+
+
+
+        .data{
+            width: 85%;
+            height: 100%;
+        }
+
+
+
+        .main{
+            margin: 0px auto;
+            max-width: 400px;
         }
     </style>
 
@@ -173,43 +200,49 @@
 <body>
     <h1>گزارش مصرف قرص فیتو</h1>
 
-    <div class="inp-btn">
+    <div class="main">
 
-        <input type="number" id="countInput" placeholder="تعداد مصرف‌شده">
+        <div class="inp-btn">
 
-        <button id="saveButton">ثبت</button>
+            <input type="number" id="countInput" placeholder="تعداد مصرف‌شده">
+    
+            <button id="saveButton">ثبت</button>
+    
+        </div>
+    
+    
+        <div class="count">
+            <div>
+                <p id="remainingText">باقی‌مانده: 120 عدد</p>
+    
+            </div>
+    
+            <div>
+                <p id="totalText">مصرف شده: 0 عدد</p>
+    
+            </div>
+    
+        </div>
+    
+    
+        <div class="buttons">
+            <div>
+                <button id="removeall">حذف کل لیست</button>
+            </div>
+    
+            <div>
+                <button id="remove">حذف آخرین مصرف</button>
+            </div>
+    
+    
+        </div>
+    
+    
+        <ul id="listView"></ul>
 
     </div>
 
-
-    <div class="count">
-        <div>
-            <p id="remainingText">باقی‌مانده: 120 عدد</p>
-
-        </div>
-
-        <div>
-            <p id="totalText">مصرف شده: 0 عدد</p>
-
-        </div>
-
-    </div>
-
-
-    <div class="buttons">
-        <div>
-            <button id="removeall">حذف کل لیست</button>
-        </div>
-
-        <div>
-            <button id="remove">حذف آخرین مصرف</button>
-        </div>
-
-
-    </div>
-
-
-    <ul id="listView"></ul>
+   
 
 </body>
 
@@ -228,8 +261,17 @@
             const li = document.createElement('li');
 
             li.innerHTML = `
-            <img src="pill-icon.png" class="pill-icon">
-             <span>${item}</span>`;
+                        
+              <div class="pill-image">
+                            <img src="pill-icon.png" class="pill-icon">
+                </div>
+
+              <div class="data">
+                             <span>${item}</span>
+                </div>
+
+            `;
+            
 
             listView.appendChild(li);
         });
