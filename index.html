@@ -126,6 +126,47 @@
             font-size: 14px;
         }
 
+        #persentage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            flex-wrap: nowrap;
+            width: 100%;
+            background-color: white;
+            height: 50px;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            flex-direction: row-reverse;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+
+            >span:nth-of-type(1) {
+                margin-left: 5px;
+                z-index: 3;
+                display: flex;
+            }
+
+            >span:nth-of-type(2) {
+                z-index: 3;
+                display: flex;
+            }
+
+
+            #bar {
+                position: absolute;
+                width: 0%;
+                height: 100%;
+                background-color: #23df38;
+                top: 0;
+                right: 0;
+                z-index: 2;
+                transition: 0.4s;
+                transition-timing-function: ease;
+            }
+        }
+
         .buttons {
             display: flex;
             justify-content: center;
@@ -237,7 +278,7 @@
 </head>
 
 <body>
-    <h1>گزارش مصرف قرص فیتو</h1>
+    <h1 id="h1">گزارش مصرف قرص فیتو</h1>
 
     <div class="main">
 
@@ -261,6 +302,13 @@
 
             </div>
 
+        </div>
+
+
+        <div id="persentage">
+            <span>0%</span>
+            <span>از قرص مصرف شده</span>
+            <div id="bar"></div>
         </div>
 
 
@@ -288,12 +336,24 @@
 
 <script defer>
     let total = 0;
-    const max = 120;
+    const max = 120
+    // const max = prompt("Enter the pills amount:");
+    // let pillname = prompt("Enter the pill name")
+    // let h1 = document.getElementById("h1").innerHTML = "گزارش مصرف قرص " + pillname
+    let progressBar = document.querySelector("#persentage>div")
+
+    let progress_spans = document.querySelector("#persentage> span:nth-of-type(1)")
+    let progress_spans1 = document.querySelector("#persentage> span:nth-of-type(2)")
+
+
+
     let list = JSON.parse(localStorage.getItem('phyto_list') || '[]');
 
     function updateUI() {
         document.getElementById('totalText').textContent = `مصرف شده: ${total} عدد`;
         document.getElementById('remainingText').textContent = `باقی‌مانده: ${max - total} عدد`;
+
+
 
         const listView = document.getElementById('listView');
         listView.innerHTML = '';
@@ -310,27 +370,59 @@
             `;
             listView.appendChild(li);
         });
+
+        progressBar.style.width = ((total / max) * 100) + "%";
+
+        document.querySelector("#persentage>span:nth-of-type(1)").innerHTML = Math.round((total / max) * 100) + "%";
+
+        if (((total / max) * 100) >= 71) {
+            progress_spans.style.color = "white"
+            progress_spans1.style.color = "white"
+        } else {
+            progress_spans.style.color = "black"
+            progress_spans1.style.color = "black"
+        }
+
+
+
     }
 
     function saveData() {
         localStorage.setItem('phyto_total', total);
         localStorage.setItem('phyto_list', JSON.stringify(list));
+        progressBar.style.width = ((total / max) * 100) + "%"
+        document.querySelector("#persentage>span:nth-of-type(1)").innerHTML = Math.round((total / max) * 100) + "%";
+
+        if (((total / max) * 100) >= 71) {
+            progress_spans.style.color = "white"
+            progress_spans1.style.color = "white"
+        }
+        else {
+            progress_spans.style.color = "black"
+            progress_spans1.style.color = "black"
+        }
     }
 
     document.getElementById('saveButton').addEventListener('click', () => {
         const input = document.getElementById('countInput').value;
-        const count = parseInt(input);
-        if (!isNaN(count) && count > 0) {
-            const now = new Date().toLocaleString();
-            const entry = `${now}: ${count} عدد`;
-            list.push(entry);
-            total += count;
-            saveData();
 
-            const listView = document.getElementById('listView');
-            const li = document.createElement('li');
-            li.classList.add('create');
-            li.innerHTML = `
+        if (input > (max - total)) {
+            alert("تعداد وارد شده از تعداد قرص های باقیمانده بیشتر است یا قرص ها را کامل مصرف کرده اید!")
+
+        }
+        else {
+            const count = parseInt(input);
+            if (!isNaN(count) && count > 0) {
+                const now = new Date().toLocaleString();
+                const entry = `${now}: ${count} عدد`;
+                list.push(entry);
+                total += count;
+                saveData();
+
+                const listView = document.getElementById('listView');
+                const li = document.createElement('li');
+                li.classList.add('create');
+                li.innerHTML = `
                 <div class="pill-image">
                     <img src="pill-icon.png" class="pill-icon">
                 </div>
@@ -338,13 +430,22 @@
                     <span>${entry}</span>
                 </div>
             `;
-            listView.appendChild(li);
+                listView.appendChild(li);
 
-            document.getElementById('totalText').textContent = `مصرف شده: ${total} عدد`;
-            document.getElementById('remainingText').textContent = `باقی‌مانده: ${max - total} عدد`;
+                document.getElementById('totalText').textContent = `مصرف شده: ${total} عدد`;
+                document.getElementById('remainingText').textContent = `باقی‌مانده: ${max - total} عدد`;
 
-            document.getElementById('countInput').value = '';
+                document.getElementById('countInput').value = '';
+
+            }
         }
+
+        if (input<= 0) {
+            alert("لطفا عددی معتبر وارد کنید!")
+            
+        }
+
+
     });
 
     document.getElementById('remove').addEventListener('click', () => {
@@ -362,10 +463,10 @@
                     total -= count;
                     if (total < 0) total = 0;
                 }
-
                 saveData();
                 updateUI();
-            }, 400);
+            }, 400); 
+
         }
     });
 
@@ -388,11 +489,17 @@
         total = parseInt(localStorage.getItem('phyto_total') || '0');
         updateUI();
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
+        // if ('serviceWorker' in navigator) {
+        //     navigator.serviceWorker.register('service-worker.js');
+        // }
     });
 </script>
 
-    
+
+
+
+
+
+
+
 </html>
