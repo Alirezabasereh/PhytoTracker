@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Phyto Tracker</title>
     <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
     <style>
         @font-face {
             font-family: myfont;
@@ -52,6 +54,7 @@
             padding: 32px 16px;
             text-align: center;
             user-select: none;
+            position: relative;
         }
 
         h1 {
@@ -346,6 +349,120 @@
         .remove {
             animation: remove 0.4s ease forwards;
         }
+
+
+
+        @keyframes popup-in {
+            0% {
+                top: -100%;
+            }
+
+            30% {
+                top: 4%;
+            }
+
+            70% {
+                top: 4%;
+            }
+
+            100% {
+                top: -100%;
+            }
+        }
+
+        .popup-in-animate {
+            animation: popup-in 4s forwards ease-in-out;
+        }
+
+
+        .popup-back-animate {
+            animation: popup-back 4s forwards ease;
+        }
+
+
+        @keyframes popup-back {
+            0% {
+                opacity: 0;
+                z-index: -100;
+            }
+
+            10% {
+                opacity: 1;
+                z-index: 100;
+            }
+
+            70% {
+                opacity: 1;
+                z-index: 100;
+            }
+
+            100% {
+                opacity: 0;
+                z-index: -100;
+            }
+        }
+
+
+
+
+
+        .popup-back {
+
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.627);
+            top: 0;
+            left: 0;
+            z-index: -100;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            animation-delay: 0.4s;
+
+
+
+
+
+
+            .popup {
+                width: 400px;
+                height: 70px;
+                background-color: white;
+                border: 2px solid rgb(54, 229, 54);
+                position: absolute;
+                top: -100%;
+                left: 50%;
+                border-radius: 1rem;
+                transform: translateX(-50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                i {
+                    color: rgb(54, 229, 54);
+                    font-size: 20px;
+                    position: absolute;
+                    top: 55%;
+                    right: 5px;
+                    transform: translate(-50%, -50%);
+                }
+
+            }
+
+            
+            @media screen and (max-width:360px) {
+                .popup {
+                    width: 300px;
+                }
+            }
+
+            @media screen and (min-width:361px) and (max-width:430px) {
+                .popup {
+                    width: 350px;
+                }
+            }
+
+        }
     </style>
 
 </head>
@@ -416,6 +533,14 @@
         <ul id="listView"></ul>
 
 
+        <div class="popup-back">
+            <div class="popup">
+                <i class="bi bi-check-circle-fill"></i>
+                <span id="popup-span"></span>
+            </div>
+        </div>
+
+
 
     </div>
 
@@ -473,7 +598,21 @@
     function resetAll() {
         if (confirm("آیا مطمئنید که می‌خواهید همه اطلاعات را ریست کنید؟")) {
             localStorage.clear();
-            location.reload();
+
+            document.getElementById("popup-span").innerText = "اطلاعات با موفقیت ریست شد"
+            document.getElementsByClassName("popup-back")[0].classList.add("popup-back-animate")
+            document.getElementsByClassName("popup")[0].classList.add("popup-in-animate")
+
+            setTimeout(() => {
+                document.getElementsByClassName("popup-back")[0].classList.remove("popup-back-animate")
+                document.getElementsByClassName("popup")[0].classList.remove("popup-in-animate")
+                document.getElementById("popup-span").innerText = ""
+                location.reload();
+
+            }, 3400);
+
+
+
         }
     }
 
@@ -627,22 +766,64 @@
                 updateUI();
             }, 400);
 
+        } else {
+            document.getElementById("popup-span").innerText = "موردی برای حذف وجود ندارد"
+            document.getElementsByClassName("popup-back")[0].classList.add("popup-back-animate")
+            document.getElementsByClassName("popup")[0].classList.add("popup-in-animate")
+
+            setTimeout(() => {
+                document.getElementsByClassName("popup-back")[0].classList.remove("popup-back-animate")
+                document.getElementsByClassName("popup")[0].classList.remove("popup-in-animate")
+                document.getElementById("popup-span").innerText = ""
+            }, 3400);
         }
     });
 
     document.getElementById('removeall').addEventListener('click', () => {
-        let restored = 0;
-        list.forEach(item => {
-            const match = item.match(/(\d+)\s*عدد$/);
-            if (match) {
-                restored += parseInt(match[1]);
-            }
-        });
-        total -= restored;
-        if (total < 0) total = 0;
-        list = [];
-        saveData();
-        updateUI();
+
+
+        if (total == 0) {
+            document.getElementById("popup-span").innerText = "موردی برای حذف وجود ندارد"
+            document.getElementsByClassName("popup-back")[0].classList.add("popup-back-animate")
+            document.getElementsByClassName("popup")[0].classList.add("popup-in-animate")
+
+            setTimeout(() => {
+                document.getElementsByClassName("popup-back")[0].classList.remove("popup-back-animate")
+                document.getElementsByClassName("popup")[0].classList.remove("popup-in-animate")
+                document.getElementById("popup-span").innerText = ""
+            }, 3400);
+
+
+        } else {
+
+
+            let restored = 0;
+            list.forEach(item => {
+                const match = item.match(/(\d+)\s*عدد$/);
+                if (match) {
+                    restored += parseInt(match[1]);
+                }
+            });
+            total -= restored;
+            if (total < 0) total = 0;
+            list = [];
+            saveData();
+            updateUI();
+
+
+            document.getElementById("popup-span").innerText = "تمامی آیتم ها با موفقیت حذف شدند"
+            document.getElementsByClassName("popup-back")[0].classList.add("popup-back-animate")
+            document.getElementsByClassName("popup")[0].classList.add("popup-in-animate")
+
+            setTimeout(() => {
+                document.getElementsByClassName("popup-back")[0].classList.remove("popup-back-animate")
+                document.getElementsByClassName("popup")[0].classList.remove("popup-in-animate")
+                document.getElementById("popup-span").innerText = ""
+            }, 3400);
+        }
+
+
+
     });
 
     window.addEventListener('load', () => {
@@ -669,6 +850,18 @@
             updateUI();
         }
         reader.readAsDataURL(file);
+
+
+
+        document.getElementById("popup-span").innerText = "عکس مورد نظر با موفقیت آپلود شد"
+        document.getElementsByClassName("popup-back")[0].classList.add("popup-back-animate")
+        document.getElementsByClassName("popup")[0].classList.add("popup-in-animate")
+
+        setTimeout(() => {
+            document.getElementsByClassName("popup-back")[0].classList.remove("popup-back-animate")
+            document.getElementsByClassName("popup")[0].classList.remove("popup-in-animate")
+            document.getElementById("popup-span").innerText = ""
+        }, 3400);
     });
 </script>
 
