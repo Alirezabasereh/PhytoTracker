@@ -518,7 +518,7 @@
 
             li.innerHTML = `
         <div class="pill-image">
-            <img src="pill-icon.png" class="pill-icon">
+        <img draggable="false" src="${iconData || 'pill-icon.png'}" class="pill-icon">
         </div>
         <div class="data">
             ${formattedItem}
@@ -600,7 +600,7 @@
         }
 
         if (input <= 0) {
-            alert("عددی معتبر وارد کنید")
+            alert("عدد معتبر وارد کنید")
         }
 
 
@@ -647,6 +647,7 @@
 
     window.addEventListener('load', () => {
         total = parseInt(localStorage.getItem('phyto_total') || '0');
+        iconData = localStorage.getItem("phyto_icon") || "";
         updateUI();
 
         // if ('serviceWorker' in navigator) {
